@@ -1,0 +1,8 @@
+# Dependencias y consideraciones
+
+[Mesa3d]
+Actualiza la verisón más de reciente de mesa <https://www.mesa3d.org/>
+Comprueba los datos con: glxinfo | grep OpenGL
+Establece las siguentes variables de entorno:
+export MESA_GL_VERSION_OVERRIDE=4.6
+export MESA_GLSL_VERSION_OVERRIDE=460
