@@ -54,7 +54,7 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 LambdaBodyIndentation: Signature
 Language: Cpp
 LineEnding: LF
-MaxEmptyLinesToKeep: 1
+MaxEmptyLinesToKeep: 0
 NamespaceIndentation: None
 PackConstructorInitializers: Never
 PointerAlignment: Left

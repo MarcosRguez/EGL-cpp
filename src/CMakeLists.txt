@@ -16,6 +16,10 @@ if(IXX)
 	if(ipo_supported AND NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug"))
 		set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 	endif()
+	target_link_libraries(${PROJECT_NAME} PUBLIC
+		OpenGL::EGL
+		${X11_LIBRARIES}
+	)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC
 		CMAKE_COMMAND="${CMAKE_COMMAND}"
 		CMAKE_CURRENT_BINARY_DIR="${CMAKE_CURRENT_BINARY_DIR}"

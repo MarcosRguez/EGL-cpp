@@ -1,0 +1,52 @@
+/**
+ * @file enums.ixx
+ * @author MarcosRguez (alu0101470368@ull.edu.es)
+ * @brief
+ * @version 0.1
+ * @date 21/08/2025
+ *
+ *
+ */
+module;
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#include <EGL/eglext_angle.h>
+#include <EGL/eglmesaext.h>
+#include <EGL/eglplatform.h>
+export module egl:enums;
+export namespace egl {
+enum struct API : EGLenum {
+	OPENGL_API = EGL_OPENGL_API,
+	OPENGL_ES_API = EGL_OPENGL_ES_API,
+	OPENVG_API = EGL_OPENVG_API
+};
+enum struct APIq : EGLenum {
+	NONE = EGL_NONE,
+	OPENGL_API = EGL_OPENGL_API,
+	OPENGL_ES_API = EGL_OPENGL_ES_API,
+	OPENVG_API = EGL_OPENVG_API
+};
+enum struct Error : EGLenum {
+	SUCCESS = EGL_SUCCESS,
+	NOT_INITIALIZED = EGL_NOT_INITIALIZED,
+	BAD_ACCESS = EGL_BAD_ACCESS,
+	BAD_ALLOC = EGL_BAD_ALLOC,
+	BAD_ATTRIBUTE = EGL_BAD_ATTRIBUTE,
+	BAD_CONTEXT = EGL_BAD_CONTEXT,
+	BAD_CONFIG = EGL_BAD_CONFIG,
+	BAD_CURRENT_SURFACE = EGL_BAD_CURRENT_SURFACE,
+	BAD_DISPLAY = EGL_BAD_DISPLAY,
+	BAD_SURFACE = EGL_BAD_SURFACE,
+	BAD_MATCH = EGL_BAD_MATCH,
+	BAD_PARAMETER = EGL_BAD_PARAMETER,
+	BAD_NATIVE_PIXMAP = EGL_BAD_NATIVE_PIXMAP,
+	BAD_NATIVE_WINDOW = EGL_BAD_NATIVE_WINDOW,
+	CONTEXT_LOST = EGL_CONTEXT_LOST
+};
+enum struct StringName : EGLint {
+	CLIENT_APIS = EGL_CLIENT_APIS,
+	VENDOR = EGL_VENDOR,
+	VERSION = EGL_VERSION,
+	EXTENSIONS = EGL_EXTENSIONS
+};
+} // namespace egl
