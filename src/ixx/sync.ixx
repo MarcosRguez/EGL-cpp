@@ -8,6 +8,7 @@
  *
  */
 module;
+#include <chrono>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <EGL/eglext_angle.h>
@@ -17,6 +18,12 @@ export module egl:sync;
 export namespace egl {
 class Sync {
  public:
+	auto ClientWait(
+		EGLint flags,
+		const std::chrono::nanoseconds& timeout) -> EGLint;
+	auto GetAttrib(
+		EGLint attribute,
+		EGLAttrib* value) -> bool;
  private:
 	EGLSync handle{};
 };

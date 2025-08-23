@@ -20,8 +20,9 @@ module;
 #include <EGL/eglplatform.h>
 export module egl:display;
 import :enums;
-import :config;
+// import :config;
 export namespace egl {
+class Config;
 class Display {
  public:
 	enum struct Attrib : EGLenum {
@@ -56,14 +57,15 @@ class Display {
 	};
 	~Display();
 	static auto Get(const std::optional<NativeDisplayType>& native_display = std::nullopt) -> Display;
+	static auto GetCurrent() -> Display;
 	constexpr auto GetHandle() const noexcept -> const EGLDisplay&;
 	auto Initialize() -> std::pair<EGLint, EGLint>;
-	auto Query(const StringName&) -> std::string_view;
+	auto QueryString(const StringName&) -> std::string_view;
 	void Terminate();
-	auto ChooseConfig(const std::unordered_map<Attrib, std::any> attrib_list) -> std::vector<Config>;
+	auto ChooseConfig(const std::unordered_map<Attrib, EGLint> attrib_list) -> std::vector<Config>;
  private:
-	explicit Display(const EGLDisplay& handle);
 	EGLDisplay handle{};
+	explicit Display(const EGLDisplay& handle);
 };
 } // namespace egl
 namespace egl {

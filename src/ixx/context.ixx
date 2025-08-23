@@ -20,10 +20,12 @@ module;
 #include <EGL/eglmesaext.h>
 #include <EGL/eglplatform.h>
 export module egl:context;
-import :display;
-import :config;
+// import :display;
+// import :config;
 import :utils;
 export namespace egl {
+class Display;
+class Config;
 enum struct Attrib : EGLenum {
 	MAJOR_VERSION = EGL_CONTEXT_MAJOR_VERSION,
 	MINOR_VERSION = EGL_CONTEXT_MINOR_VERSION,
@@ -52,7 +54,7 @@ class Context {
 		const Display& display,
 		const Config& config,
 		const std::optional<Context>& share_context = std::nullopt,
-		const std::unordered_map<Attrib, std::any>& attrib_list = {});
+		const std::unordered_map<Attrib, EGLint>& attrib_list = {});
 	~Context();
 	constexpr auto GetHandle() const noexcept -> const EGLContext&;
 	auto Query();

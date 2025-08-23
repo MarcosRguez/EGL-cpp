@@ -27,7 +27,7 @@ Context::Context(
 	const Display& display,
 	const Config& config,
 	const std::optional<Context>& share_context,
-	const std::unordered_map<Attrib, std::any>& attrib_list) :
+	const std::unordered_map<Attrib, EGLint>& attrib_list) :
 		handle{eglCreateContext(
 			display.GetHandle(),
 			config.GetHandle(),
@@ -37,15 +37,7 @@ Context::Context(
 				resultado.reserve(attrib_list.size() * 2uz);
 				for (const auto& [key, value] : attrib_list) {
 					resultado.push_back(std::to_underlying(key));
-					if (AttribToValue(key) != value.type()) {
-						throw std::invalid_argument{"📠"};
-					}
-					resultado.push_back([&](){
-						EGLint resultado{};
-						const void* raw = std::any_cast<const void*>(&value);
-						std::memcpy(&resultado, raw, sizeof(resultado));
-						return resultado;
-					}());
+					resultado.push_back(value);
 				}
 				return resultado.data();
 			}())},
