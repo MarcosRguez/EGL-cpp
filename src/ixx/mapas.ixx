@@ -17,7 +17,6 @@ module;
 #include <EGL/eglplatform.h>
 export module egl:mapas;
 import :enums;
-import :context;
 namespace egl {
 #if __has_cpp_attribute(nodiscard)
 [[nodiscard]]
@@ -42,16 +41,16 @@ constexpr auto to_string(const Error& error) {
 		default: throw std::invalid_argument{"🫗"};
 	}
 }
-auto AttribToValue(const Attrib& attrib) -> std::type_index {
-	switch (attrib) {
-		case Attrib::MAJOR_VERSION: return typeid(EGLint);
-		case Attrib::MINOR_VERSION: return typeid(EGLint);
-		case Attrib::OPENGL_PROFILE_MASK: return typeid(EGLint);
-		case Attrib::OPENGL_DEBUG: return typeid(EGLint);
-		case Attrib::OPENGL_FORWARD_COMPATIBLE: return typeid(EGLint);
-		case Attrib::OPENGL_ROBUST_ACCESS: return typeid(EGLint);
-		case Attrib::OPENGL_RESET_NOTIFICATION_STRATEGY: return typeid(EGLint);
-		default: throw std::invalid_argument{"🫗"};
-	}
-}
+// auto AttribToValue(const Attrib& attrib) -> std::type_index {
+// 	switch (attrib) {
+// 		case Attrib::MAJOR_VERSION: return typeid(EGLint);
+// 		case Attrib::MINOR_VERSION: return typeid(EGLint);
+// 		case Attrib::OPENGL_PROFILE_MASK: return typeid(EGLint);
+// 		case Attrib::OPENGL_DEBUG: return typeid(EGLint);
+// 		case Attrib::OPENGL_FORWARD_COMPATIBLE: return typeid(EGLint);
+// 		case Attrib::OPENGL_ROBUST_ACCESS: return typeid(EGLint);
+// 		case Attrib::OPENGL_RESET_NOTIFICATION_STRATEGY: return typeid(EGLint);
+// 		default: throw std::invalid_argument{"🫗"};
+// 	}
+// }
 } // namespace egl

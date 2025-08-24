@@ -10,17 +10,21 @@
 module;
 #include <functional>
 #include <stdexcept>
+#include <utility>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <EGL/eglext_angle.h>
 #include <EGL/eglmesaext.h>
 #include <EGL/eglplatform.h>
 export module egl:config;
-// import :display;
+import :display;
+import :debug;
 import :misc;
+import :mapas;
 export namespace egl {
 class Display;
 class Config {
+	friend class Display;
  public:
 	enum struct Attrib : EGLenum {
 		ALPHA_SIZE = EGL_ALPHA_SIZE,
@@ -60,22 +64,48 @@ class Config {
 	struct AttribValue;
 	template <Attrib attrib>
 	using AttribValue_t = typename AttribValue<attrib>::type;
-	Config(const Display&);
 	constexpr auto GetHandle() const noexcept -> const EGLConfig&;
 	template <Attrib attribute>
 	auto GetAttrib() const -> AttribValue_t<attribute>;
  private:
 	EGLConfig handle{};
 	std::reference_wrapper<std::add_const_t<Display>> display;
+	Config(const EGLConfig& handle, const Display& display);
 };
-template <>
-struct Config::AttribValue<Config::Attrib::ALPHA_SIZE> {
-	using type = EGLint;
-};
-template <>
-struct Config::AttribValue<Config::Attrib::CONFIG_ID> {
-	using type = EGLint;
-};
+// clang-format off
+template <> struct Config::AttribValue<Config::Attrib::ALPHA_SIZE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::ALPHA_MASK_SIZE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::BIND_TO_TEXTURE_RGB> {	using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::BIND_TO_TEXTURE_RGBA> {	using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::BLUE_SIZE> {	using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::BUFFER_SIZE> {	using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::COLOR_BUFFER_TYPE> {	using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::CONFIG_CAVEAT> {	using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::CONFIG_ID> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::CONFORMANT> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::DEPTH_SIZE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::GREEN_SIZE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::LEVEL> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::LUMINANCE_SIZE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::MAX_PBUFFER_WIDTH> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::MAX_PBUFFER_HEIGHT> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::MAX_PBUFFER_PIXELS> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::MAX_SWAP_INTERVAL> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::MIN_SWAP_INTERVAL> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::NATIVE_RENDERABLE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::NATIVE_VISUAL_ID> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::NATIVE_VISUAL_TYPE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::RED_SIZE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::RENDERABLE_TYPE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::SAMPLE_BUFFERS> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::SAMPLES> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::STENCIL_SIZE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::SURFACE_TYPE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::TRANSPARENT_TYPE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::TRANSPARENT_RED_VALUE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::TRANSPARENT_GREEN_VALUE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::TRANSPARENT_BLUE_VALUE> { using type = EGLint; };
+// clang-format on
 } // namespace egl
 namespace egl {
 constexpr auto Config::GetHandle() const noexcept -> const EGLConfig& {
@@ -84,7 +114,7 @@ constexpr auto Config::GetHandle() const noexcept -> const EGLConfig& {
 template <Config::Attrib attribute>
 auto Config::GetAttrib() const -> AttribValue_t<attribute> {
 	AttribValue_t<attribute> value;
-	if (!EGLBooleanToBool(eglGetConfigAttrib(this->display.get().GetHandle(), this->handle, attribute, reinterpret_cast<EGLint*>(&value)))) {
+	if (!EGLBooleanToBool(eglGetConfigAttrib(this->display.get().GetHandle(), this->handle, std::to_underlying(attribute), reinterpret_cast<EGLint*>(&value)))) {
 		throw std::runtime_error{to_string(GetError())};
 	}
 	return value;

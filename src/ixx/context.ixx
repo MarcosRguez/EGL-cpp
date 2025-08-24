@@ -26,6 +26,7 @@ import :utils;
 export namespace egl {
 class Display;
 class Config;
+class Surface;
 enum struct Attrib : EGLenum {
 	MAJOR_VERSION = EGL_CONTEXT_MAJOR_VERSION,
 	MINOR_VERSION = EGL_CONTEXT_MINOR_VERSION,
@@ -57,6 +58,7 @@ class Context {
 		const std::unordered_map<Attrib, EGLint>& attrib_list = {});
 	~Context();
 	constexpr auto GetHandle() const noexcept -> const EGLContext&;
+	static auto GetCurrent() -> Context;
 	auto Query();
  private:
 	EGLContext handle{};
@@ -66,6 +68,11 @@ template <>
 struct AttribValue<Attrib::MAJOR_VERSION> {
 	using type = EGLint;
 };
+void MakeCurrent(
+	const Display& display,
+	const Surface& draw,
+	const Surface& read,
+	const Context& context);
 } // namespace egl
 namespace egl {
 constexpr auto Context::GetHandle() const noexcept -> const EGLContext& {

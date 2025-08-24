@@ -15,6 +15,7 @@ module;
 #include <EGL/eglplatform.h>
 export module egl;
 export import :utils;
+export import :debug;
 export import :misc;
 export import :enums;
 export import :mapas;

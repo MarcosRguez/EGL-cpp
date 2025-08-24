@@ -29,9 +29,6 @@ void BindAPI(const API& api) {
 // auto GetDisplay(const std::optional<NativeDisplayType>& native_display) -> Display {
 // 	return Display{eglGetDisplay(native_display.value_or(EGL_DEFAULT_DISPLAY))};
 // }
-auto GetError() -> Error {
-	return static_cast<Error>(eglGetError());
-}
 void MakeCurrent(
 	const Display& display,
 	const Surface& draw,

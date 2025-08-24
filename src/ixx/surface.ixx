@@ -16,10 +16,11 @@ module;
 #include <EGL/eglmesaext.h>
 #include <EGL/eglplatform.h>
 export module egl:surface;
-// import :display;
-import :config;
+import :display;
+// import :config;
 export namespace egl {
 class Display;
+class Config;
 class Surface {
  public:
 	enum struct Attribute : EGLenum {
@@ -34,6 +35,7 @@ class Surface {
 		NativeWindowType native_window,
 		const std::unordered_map<Attribute, EGLint>& attrib_list = {}) -> Surface;
 	constexpr auto GetHandle() const noexcept -> const EGLSurface&;
+	static auto GetCurrent(EGLint readdraw) -> Surface;
 	auto Attrib(
 		EGLint attribute,
 		EGLint value) -> EGLBoolean;
@@ -41,6 +43,15 @@ class Surface {
 		EGLint attribute,
 		EGLint* value);
 	void SwapBuffers();
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
+	auto ReleaseTexImage(EGLint buffer) -> EGLBoolean;
+	auto CopyBuffers(NativePixmapType native_pixmap) -> bool;
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
+	auto BindTexImage(EGLint buffer) -> bool;
  private:
 	EGLSurface handle{};
 	std::reference_wrapper<std::add_const_t<Display>> display;

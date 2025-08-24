@@ -24,6 +24,7 @@ class Sync {
 	auto GetAttrib(
 		EGLint attribute,
 		EGLAttrib* value) -> bool;
+	EGLBoolean Wait(EGLint flags);
  private:
 	EGLSync handle{};
 };

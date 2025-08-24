@@ -44,7 +44,7 @@ Context::Context(
 			display{std::cref(display)} {}
 Context::~Context() {
 	if (!EGLBooleanToBool(eglDestroyContext(this->display.get().GetHandle(), this->handle))) {
-		std::println(std::cerr, "mal");
+		std::println(std::cerr, "Error al destruir el contexto: {}", to_string(GetError()));
 	}
 }
 } // namespace egl

@@ -21,6 +21,7 @@ module;
 #include <EGL/eglmesaext.h>
 #include <EGL/eglplatform.h>
 module egl;
+import :config;
 namespace egl {
 Display::Display(const EGLDisplay& handle) :
 		handle{handle} {}
@@ -54,9 +55,14 @@ auto Display::ChooseConfig(const std::unordered_map<Attrib, EGLint> attrib_list)
 	if (!EGLBooleanToBool(eglChooseConfig(this->handle, list.data(), nullptr, 0, &num_config))) {
 		throw std::runtime_error{to_string(GetError())};
 	}
-	resultado.resize(num_config, Config{*this});
-	if (!EGLBooleanToBool(eglChooseConfig(this->handle, list.data(), reinterpret_cast<EGLConfig*>(resultado.data()), resultado.size(), &num_config))) {
+	resultado.reserve(num_config);
+	std::vector<EGLConfig> cosa;
+	cosa.resize(num_config);
+	if (!EGLBooleanToBool(eglChooseConfig(this->handle, list.data(), cosa.data(), cosa.size(), &num_config))) {
 		throw std::runtime_error{to_string(GetError())};
+	}
+	for (const auto& id : cosa) {
+		resultado.push_back(Config{id, *this});
 	}
 	return resultado;
 }

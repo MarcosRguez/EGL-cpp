@@ -58,11 +58,19 @@ class Display {
 	~Display();
 	static auto Get(const std::optional<NativeDisplayType>& native_display = std::nullopt) -> Display;
 	static auto GetCurrent() -> Display;
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
+	static auto GetPlatform(
+		EGLenum platform,
+		void* native_display,
+		const EGLAttrib* attrib_list) -> Display;
 	constexpr auto GetHandle() const noexcept -> const EGLDisplay&;
 	auto Initialize() -> std::pair<EGLint, EGLint>;
 	auto QueryString(const StringName&) -> std::string_view;
 	void Terminate();
-	auto ChooseConfig(const std::unordered_map<Attrib, EGLint> attrib_list) -> std::vector<Config>;
+	auto ChooseConfig(const std::unordered_map<Attrib, EGLint> attrib_list = {}) -> std::vector<Config>;
+	void SwapInterval(EGLint interval);
  private:
 	EGLDisplay handle{};
 	explicit Display(const EGLDisplay& handle);
