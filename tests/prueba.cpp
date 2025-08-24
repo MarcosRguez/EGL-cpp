@@ -14,9 +14,10 @@
 #include <print>
 #include <stdlib.h>
 #include <unistd.h>
-#include <EGL/egl.h>
-#include <GLES/gl.h>
 #include <X11/Xlib.h>
+#include <EGL/egl.h>
+#include <glad/egl.h>
+#include <glad/gl.h>
 import egl;
 using namespace std::literals;
 auto* pantalla{XOpenDisplay(nullptr)};
@@ -74,6 +75,8 @@ auto rootWindow{XDefaultRootWindow(pantalla)};
 // }
 TEST_CASE("contexto") {
 	std::println(std::cout, "EGL++");
+	// const auto disp{eglGetDisplay(EGL_DEFAULT_DISPLAY)};
+	gladLoaderLoadEGL(EGL_NO_DISPLAY);
 	auto display{egl::Display::Get(std::make_optional(pantalla))};
 	/* initialize the EGL display connection */
 	display.Initialize();
@@ -81,13 +84,12 @@ TEST_CASE("contexto") {
 	const auto configs{display.ChooseConfig(
 		{{egl::Display::Attrib::RED_SIZE, 1},
 		 {egl::Display::Attrib::GREEN_SIZE, 1},
-		 {egl::Display::Attrib::BLUE_SIZE, 1}
+		 {egl::Display::Attrib::BLUE_SIZE, 1},
 		 {egl::Display::Attrib::DEPTH_SIZE, 24},
 		 {egl::Display::Attrib::STENCIL_SIZE, 0},
 		 {egl::Display::Attrib::SAMPLES, 0},
 		 {egl::Display::Attrib::RENDERABLE_TYPE, EGL_OPENGL_ES_BIT},
-		 {egl::Display::Attrib::SURFACE_TYPE, EGL_WINDOW_BIT}
-		})};
+		 {egl::Display::Attrib::SURFACE_TYPE, EGL_WINDOW_BIT}})};
 	// const auto configs{display.ChooseConfig()};
 	// for (const auto& config : configs) {
 	// 	std::println(std::cout, "-------------------");
@@ -129,8 +131,16 @@ TEST_CASE("contexto") {
 	auto native_window{XCreateWindow(
 		pantalla,
 		rootWindow,
-
-	)};
+		0,
+		0,
+		100,
+		100,
+		0,
+		0,
+		0,
+		nullptr,
+		0,
+		nullptr)};
 	/* create an EGL window surface */
 	bool lanza{false};
 	for (const auto& i : configs) {

@@ -14,11 +14,7 @@ module;
 #include <utility>
 #include <any>
 #include <unordered_set>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <EGL/eglext_angle.h>
-#include <EGL/eglmesaext.h>
-#include <EGL/eglplatform.h>
+#include <glad/egl.h>
 export module egl:context;
 // import :display;
 // import :config;

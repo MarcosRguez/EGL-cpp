@@ -10,11 +10,7 @@
 module;
 #include <stdexcept>
 #include <typeindex>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <EGL/eglext_angle.h>
-#include <EGL/eglmesaext.h>
-#include <EGL/eglplatform.h>
+#include <glad/egl.h>
 export module egl:mapas;
 import :enums;
 namespace egl {

@@ -13,13 +13,15 @@ if(IXX)
 		PUBLIC FILE_SET m TYPE CXX_MODULES FILES ${IXX}
 		PRIVATE ${CXX}
 	)
+	add_dependencies(${LIB_NAME} glad)
+	target_include_directories(${LIB_NAME} PUBLIC ${glad_INCLUDE_DIR})
+	target_link_libraries(${LIB_NAME} PUBLIC
+		glad
+		${X11_LIBRARIES}
+	)
 	if(ipo_supported AND NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug"))
 		set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 	endif()
-	target_link_libraries(${PROJECT_NAME} PUBLIC
-		OpenGL::EGL
-		${X11_LIBRARIES}
-	)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC
 		CMAKE_COMMAND="${CMAKE_COMMAND}"
 		CMAKE_CURRENT_BINARY_DIR="${CMAKE_CURRENT_BINARY_DIR}"

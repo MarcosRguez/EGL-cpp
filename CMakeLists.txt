@@ -34,15 +34,6 @@ else()
 	message(CHECK_FAIL "IPO no soportado")
 endif()
 
-include(FindOpenGL)
-message(CHECK_START "Buscando EGL...")
-find_package(OpenGL REQUIRED COMPONENTS EGL)
-if(OpenGL_EGL_FOUND)
-	message(CHECK_PASS "egl encontrado")
-else()
-	message(CHECK_FAIL "egl no encontrado")
-endif()
-
 include(FindX11)
 message(CHECK_START "Buscando X11...")
 find_package(X11 REQUIRED)
@@ -51,6 +42,31 @@ if(X11_FOUND)
 else()
 	message(CHECK_FAIL "X11 no encontrado")
 endif()
+
+include(FetchContent)
+
+# glad
+FetchContent_Declare(
+	glad
+	GIT_REPOSITORY git@github.com:Dav1dde/glad.git
+	GIT_TAG v2.0.8)
+FetchContent_MakeAvailable(glad)
+add_subdirectory("${glad_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_BINARY_DIR}/gladsources")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+	glad_add_library(glad DEBUG LOADER API egl=1.5 API gl:core=4.6)
+else()
+	glad_add_library(glad API egl=1.5)
+endif()
+set_target_properties(glad PROPERTIES
+	C_STANDARD 23
+	C_STANDARD_REQUIRED ON
+	C_EXTENSIONS OFF
+)
+if(ipo_supported AND NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+	set_target_properties(glad PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+	message(STATUS "Interprocedural optimization enabled for glad")
+endif()
+set(glad_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/gladsources/glad/include")
 
 set(LIB_NAME EGL++)
 
