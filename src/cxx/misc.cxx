@@ -22,9 +22,9 @@ void BindAPI(const API& api) {
 		throw std::invalid_argument{to_string(GetError())};
 	}
 }
-// auto GetDisplay(const std::optional<NativeDisplayType>& native_display) -> Display {
-// 	return Display{eglGetDisplay(native_display.value_or(EGL_DEFAULT_DISPLAY))};
-// }
+auto GetProcAddress(const char* procname) -> void(*)() {
+	return eglGetProcAddress(procname);
+}
 void MakeCurrent(
 	const Display& display,
 	const Surface& draw,

@@ -15,8 +15,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <X11/Xlib.h>
-#include <EGL/egl.h>
+#include <X11/Xutil.h>
 #include <glad/egl.h>
+// #include <EGL/egl.h>
 #include <glad/gl.h>
 import egl;
 using namespace std::literals;
@@ -73,13 +74,51 @@ auto rootWindow{XDefaultRootWindow(pantalla)};
 // 	// sleep(10);
 // 	XDestroyWindow(pantalla, native_window);
 // }
+Window create_x11_window(
+	Display* x_display,
+	int screen,
+	int visualid,
+	int width,
+	int height) {
+	XVisualInfo visTemplate;
+	visTemplate.visualid = visualid;
+	int num_visuals;
+	XVisualInfo* visInfo = XGetVisualInfo(x_display, VisualIDMask,
+																				&visTemplate, &num_visuals);
+	if (!visInfo) {
+		fprintf(stderr, "Error: no hay Visual de X11 para visualid=0x%lx\n", (unsigned long)visualid);
+		exit(1);
+	}
+	XSetWindowAttributes swa;
+	swa.colormap = XCreateColormap(
+		x_display,
+		RootWindow(x_display, screen),
+		visInfo->visual, AllocNone);
+	swa.event_mask = ExposureMask | KeyPressMask | StructureNotifyMask;
+	Window win = XCreateWindow(
+		x_display,
+		RootWindow(x_display, screen),
+		0, 0, width, height, 0,
+		visInfo->depth, InputOutput,
+		visInfo->visual,
+		CWColormap | CWEventMask, &swa);
+	XFree(visInfo);
+	XMapWindow(x_display, win);
+	XFlush(x_display);
+	return win;
+}
 TEST_CASE("contexto") {
 	std::println(std::cout, "EGL++");
 	// const auto disp{eglGetDisplay(EGL_DEFAULT_DISPLAY)};
 	gladLoaderLoadEGL(EGL_NO_DISPLAY);
 	auto display{egl::Display::Get(std::make_optional(pantalla))};
+	const auto [major, minor]{display.Initialize()};
+	gladLoaderLoadEGL(eglGetDisplay(pantalla));
+	// inicializar opengl
+	gladLoadGL(egl::GetProcAddress); // la versión está mal
 	/* initialize the EGL display connection */
-	display.Initialize();
+	std::println(std::cout, "versión: {}.{}", major, minor);
+	egl::BindAPI(egl::API::OPENGL_API);
 	/* get an appropriate EGL frame buffer configuration */
 	const auto configs{display.ChooseConfig(
 		{{egl::Display::Attrib::RED_SIZE, 1},
@@ -128,33 +167,39 @@ TEST_CASE("contexto") {
 	/* create an EGL rendering context */
 	const egl::Context context{display, configs.front()};
 	/* create a native window */
-	auto native_window{XCreateWindow(
+	auto native_window{create_x11_window(
 		pantalla,
-		rootWindow,
-		0,
-		0,
+		DefaultScreen(pantalla),
+		configs.front().GetAttrib<egl::Config::Attrib::NATIVE_VISUAL_ID>(),
 		100,
-		100,
-		0,
-		0,
-		0,
-		nullptr,
-		0,
-		nullptr)};
+		100)};
+	// auto native_window{XCreateWindow(
+	// 	pantalla,
+	// 	rootWindow,
+	// 	0,
+	// 	0,
+	// 	100,
+	// 	100,
+	// 	0,
+	// 	0,
+	// 	0,
+	// 	nullptr,
+	// 	0,
+	// 	nullptr)};
 	/* create an EGL window surface */
-	bool lanza{false};
-	for (const auto& i : configs) {
-		lanza = false;
-		try {
-			auto surface{egl::Surface::CreateWindow(display, i, native_window)};
-		} catch (...) {
-			lanza = true;
-			// std::cout << i.GetAttrib<egl::Config::Attrib::CONFIG_ID>() << " lanza excepción" << '\n';
-		}
-		if (!lanza) {
-			std::cout << i.GetAttrib<egl::Config::Attrib::CONFIG_ID>() << " no lanza excepción!!!" << '\n';
-		}
-	}
+	// bool lanza{false};
+	// for (const auto& i : configs) {
+	// 	lanza = false;
+	// 	try {
+	// 		auto surface{egl::Surface::CreateWindow(display, i, native_window)};
+	// 	} catch (...) {
+	// 		lanza = true;
+	// 		// std::cout << i.GetAttrib<egl::Config::Attrib::CONFIG_ID>() << " lanza excepción" << '\n';
+	// 	}
+	// 	if (!lanza) {
+	// 		std::cout << i.GetAttrib<egl::Config::Attrib::CONFIG_ID>() << " no lanza excepción!!!" << '\n';
+	// 	}
+	// }
 	auto surface{egl::Surface::CreateWindow(display, configs.front(), native_window)};
 	/* connect the context to the surface */
 	egl::MakeCurrent(display, surface, surface, context);

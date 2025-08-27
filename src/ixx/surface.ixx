@@ -12,6 +12,7 @@ module;
 #include <any>
 #include <glad/egl.h>
 export module egl:surface;
+import :enums;
 import :display;
 // import :config;
 export namespace egl {
@@ -31,7 +32,7 @@ class Surface {
 		NativeWindowType native_window,
 		const std::unordered_map<Attribute, EGLint>& attrib_list = {}) -> Surface;
 	constexpr auto GetHandle() const noexcept -> const EGLSurface&;
-	static auto GetCurrent(EGLint readdraw) -> Surface;
+	static auto GetCurrent(const ReadDraw& readdraw) -> Surface;
 	auto Attrib(
 		EGLint attribute,
 		EGLint value) -> EGLBoolean;

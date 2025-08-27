@@ -45,4 +45,8 @@ enum struct StringName : EGLint {
 	VERSION = EGL_VERSION,
 	EXTENSIONS = EGL_EXTENSIONS
 };
+enum struct ReadDraw : EGLenum {
+	READ = EGL_READ,
+	DRAW = EGL_DRAW
+};
 } // namespace egl

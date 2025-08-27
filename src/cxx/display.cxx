@@ -24,6 +24,22 @@ Display::Display(const EGLDisplay& handle) :
 Display::~Display() {
 	this->Terminate(); // no sé si es necesario
 }
+auto Display::GetConfigs() -> std::vector<Config> {
+	std::vector<Config> resultado;
+	std::vector<EGLConfig> cosa;
+	EGLint num_config{};
+	if (!EGLBooleanToBool(eglGetConfigs(this->handle, nullptr, 0, &num_config))) {
+		throw std::runtime_error{to_string(GetError())};
+	}
+	cosa.resize(num_config);
+	if (!EGLBooleanToBool(eglGetConfigs(this->handle, cosa.data(), cosa.size(), &num_config))) {
+		throw std::runtime_error{to_string(GetError())};
+	}
+	for (const auto& i : cosa) {
+		resultado.push_back(Config{i, *this});
+	}
+	return resultado;
+}
 auto Display::GetCurrent() -> Display {
 	return Display{eglGetCurrentDisplay()};
 }
@@ -36,7 +52,11 @@ auto Display::Initialize() -> std::pair<EGLint, EGLint> {
 	return std::make_pair(major, minor);
 }
 auto Display::Get(const std::optional<NativeDisplayType>& native_display) -> Display {
-	return Display{eglGetDisplay(native_display.value_or(EGL_DEFAULT_DISPLAY))};
+	const auto resultado{eglGetDisplay(native_display.value_or(EGL_DEFAULT_DISPLAY))};
+	if (resultado == EGL_NO_DISPLAY) {
+		throw std::runtime_error{"EGL_NO_DISPLAY"};
+	}
+	return Display{resultado};
 }
 auto Display::ChooseConfig(const std::unordered_map<Attrib, EGLint> attrib_list) -> std::vector<Config> {
 	std::vector<Config> resultado;
@@ -61,6 +81,11 @@ auto Display::ChooseConfig(const std::unordered_map<Attrib, EGLint> attrib_list)
 		resultado.push_back(Config{id, *this});
 	}
 	return resultado;
+}
+void Display::SwapInterval(const EGLint& interval) {
+	if (!EGLBooleanToBool(eglSwapInterval(this->handle, interval))) {
+		throw std::runtime_error{to_string(GetError())};
+	}
 }
 void Display::Terminate() {
 	if (!EGLBooleanToBool(eglTerminate(this->handle))) {

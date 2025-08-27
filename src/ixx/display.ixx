@@ -52,7 +52,21 @@ class Display {
 		TRANSPARENT_BLUE_VALUE = EGL_TRANSPARENT_BLUE_VALUE
 	};
 	~Display();
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
+	constexpr auto GetHandle() const noexcept -> const EGLDisplay&;
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
+	auto GetConfigs() -> std::vector<Config>;
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
 	static auto Get(const std::optional<NativeDisplayType>& native_display = std::nullopt) -> Display;
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
 	static auto GetCurrent() -> Display;
 #if __has_cpp_attribute(nodiscard)
 	[[nodiscard]]
@@ -61,12 +75,17 @@ class Display {
 		EGLenum platform,
 		void* native_display,
 		const EGLAttrib* attrib_list) -> Display;
-	constexpr auto GetHandle() const noexcept -> const EGLDisplay&;
 	auto Initialize() -> std::pair<EGLint, EGLint>;
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
 	auto QueryString(const StringName&) -> std::string_view;
-	void Terminate();
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
 	auto ChooseConfig(const std::unordered_map<Attrib, EGLint> attrib_list = {}) -> std::vector<Config>;
-	void SwapInterval(EGLint interval);
+	void SwapInterval(const EGLint& interval);
+	void Terminate();
  private:
 	EGLDisplay handle{};
 	explicit Display(const EGLDisplay& handle);

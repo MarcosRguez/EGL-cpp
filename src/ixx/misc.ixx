@@ -37,12 +37,7 @@ constexpr auto EGLBooleanToBool(const EGLBoolean& value) noexcept -> bool {
 } // namespace egl
 export namespace egl {
 void BindAPI(const API& api);
-// auto GetConfigs(
-// 	const Display& display,
-// 	Config* configs,
-// 	EGLint config_size,
-// 	EGLint* num_config) -> bool;
-auto GetProcAddress(const char* procname) -> void*;
+auto GetProcAddress(const char* procname) -> void(*)();
 #if __has_cpp_attribute(nodiscard)
 [[nodiscard]]
 #endif

@@ -43,6 +43,13 @@ auto Surface::CreateWindow(
 	}
 	return resultado;
 }
+auto Surface::GetCurrent(const ReadDraw& readdraw) -> Surface {
+	const auto resultado{eglGetCurrentSurface(std::to_underlying(readdraw))};
+	if (resultado == EGL_NO_SURFACE) {
+		throw std::runtime_error{"EGL_NO_SURFACE"};
+	}
+	return Surface{resultado, Display::GetCurrent()};
+}
 void Surface::SwapBuffers() {
 	if (!EGLBooleanToBool(eglSwapBuffers(this->display.get().GetHandle(), this->handle))) {
 		throw std::runtime_error{to_string(GetError())};
