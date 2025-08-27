@@ -53,10 +53,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glad)
 add_subdirectory("${glad_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_BINARY_DIR}/gladsources")
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-	glad_add_library(glad DEBUG LOADER API egl=1.5 API gl:core=4.6)
+	# glad_add_library(glad DEBUG LOADER API egl=1.5 API gl:core=4.6)
+	set(GLAD_DEBUG DEBUG)
 else()
-	glad_add_library(glad API egl=1.5)
 endif()
+glad_add_library(glad ${GLAD_DEBUG} LOADER API egl=1.5 API gl:core=4.6)
 set_target_properties(glad PROPERTIES
 	C_STANDARD 23
 	C_STANDARD_REQUIRED ON

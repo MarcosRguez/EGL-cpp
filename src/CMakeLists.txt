@@ -28,6 +28,9 @@ if(IXX)
 		CMAKE_CURRENT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 		CMAKE_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 	)
+	if(DEFINED GLAD_DEBUG)
+		target_compile_definitions(${PROJECT_NAME} PRIVATE GLAD_DEBUG)
+	endif()
 	target_compile_options(${PROJECT_NAME} PRIVATE
 		-Wall -Wextra -Wpedantic
 		# -Weffc++

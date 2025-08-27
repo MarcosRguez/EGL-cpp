@@ -24,20 +24,19 @@ Context::Context(
 	const Config& config,
 	const std::optional<Context>& share_context,
 	const std::unordered_map<Attrib, EGLint>& attrib_list) :
-		handle{eglCreateContext(
-			display.GetHandle(),
-			config.GetHandle(),
-			share_context ? share_context.value().GetHandle() : EGL_NO_CONTEXT,
-			[&]() {
-				std::vector<EGLint> resultado;
-				resultado.reserve(attrib_list.size() * 2uz);
-				for (const auto& [key, value] : attrib_list) {
-					resultado.push_back(std::to_underlying(key));
-					resultado.push_back(value);
-				}
-				return resultado.data();
-			}())},
-			display{std::cref(display)} {}
+		display{std::cref(display)} {
+	std::vector<EGLint> attribs;
+	attribs.reserve(attrib_list.size() * 2uz + 1);
+	for (const auto& [key, value] : attrib_list) {
+		attribs.push_back(std::to_underlying(key));
+		attribs.push_back(value);
+	}
+	attribs.push_back(EGL_NONE);
+	this->handle = eglCreateContext(
+		display.GetHandle(),
+		config.GetHandle(),
+		share_context ? share_context.value().GetHandle() : EGL_NO_CONTEXT, attribs.data());
+}
 Context::~Context() {
 	if (!EGLBooleanToBool(eglDestroyContext(this->display.get().GetHandle(), this->handle))) {
 		std::println(std::cerr, "Error al destruir el contexto: {}", to_string(GetError()));

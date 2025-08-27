@@ -17,63 +17,11 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <glad/egl.h>
-// #include <EGL/egl.h>
 #include <glad/gl.h>
 import egl;
 using namespace std::literals;
 auto* pantalla{XOpenDisplay(nullptr)};
 auto rootWindow{XDefaultRootWindow(pantalla)};
-// TEST_CASE("eglIntro") {
-// 	const EGLint attribute_list[] = {
-// 		EGL_RED_SIZE, 1,
-// 		EGL_GREEN_SIZE, 1,
-// 		EGL_BLUE_SIZE, 1,
-// 		EGL_NONE};
-// 	EGLDisplay display;
-// 	EGLConfig config;
-// 	EGLContext context;
-// 	EGLSurface surface;
-// 	NativeWindowType native_window;
-// 	EGLint num_config;
-// 	/* get an EGL display connection */
-// 	display = eglGetDisplay(pantalla);
-// 	/* initialize the EGL display connection */
-// 	eglInitialize(display, NULL, NULL);
-// 	/* get an appropriate EGL frame buffer configuration */
-// 	eglChooseConfig(display, attribute_list, &config, 1, &num_config);
-// 	// inspeccionar config
-// 	{
-// 		EGLint value{};
-// 		eglGetConfigAttrib(display, config, EGL_ALPHA_SIZE, &value);
-// 		std::println(std::cout, "{}: {}", "EGL_ALPHA_SIZE", value);
-// 		eglGetConfigAttrib(display, config, EGL_CONFIG_ID, &value);
-// 		std::println(std::cout, "{}: {}", "EGL_CONFIG_ID", value);
-// 	}
-// 	/* create an EGL rendering context */
-// 	context = eglCreateContext(display, config, EGL_NO_CONTEXT, NULL);
-// 	/* create a native window */
-// 	native_window = XCreateSimpleWindow(
-// 		pantalla,
-// 		RootWindow,
-// 		0,
-// 		0,
-// 		100,
-// 		100,
-// 		0,
-// 		0,
-// 		0);
-// 	/* create an EGL window surface */
-// 	surface = eglCreateWindowSurface(display, config, native_window, NULL);
-// 	/* connect the context to the surface */
-// 	eglMakeCurrent(display, surface, surface, context);
-// 	/* clear the color buffer */
-// 	glClearColor(1.0, 1.0, 0.0, 1.0);
-// 	glClear(GL_COLOR_BUFFER_BIT);
-// 	glFlush();
-// 	eglSwapBuffers(display, surface);
-// 	// sleep(10);
-// 	XDestroyWindow(pantalla, native_window);
-// }
 Window create_x11_window(
 	Display* x_display,
 	int screen,
@@ -83,8 +31,7 @@ Window create_x11_window(
 	XVisualInfo visTemplate;
 	visTemplate.visualid = visualid;
 	int num_visuals;
-	XVisualInfo* visInfo = XGetVisualInfo(x_display, VisualIDMask,
-																				&visTemplate, &num_visuals);
+	XVisualInfo* visInfo = XGetVisualInfo(x_display, VisualIDMask, &visTemplate, &num_visuals);
 	if (!visInfo) {
 		fprintf(stderr, "Error: no hay Visual de X11 para visualid=0x%lx\n", (unsigned long)visualid);
 		exit(1);
@@ -109,13 +56,10 @@ Window create_x11_window(
 }
 TEST_CASE("contexto") {
 	std::println(std::cout, "EGL++");
-	// const auto disp{eglGetDisplay(EGL_DEFAULT_DISPLAY)};
-	gladLoaderLoadEGL(EGL_NO_DISPLAY);
+	glad::LoaderLoadEGL();
 	auto display{egl::Display::Get(std::make_optional(pantalla))};
 	const auto [major, minor]{display.Initialize()};
-	gladLoaderLoadEGL(eglGetDisplay(pantalla));
-	// inicializar opengl
-	gladLoadGL(egl::GetProcAddress); // la versión está mal
+	glad::LoadEGL(display, egl::GetProcAddress);
 	/* initialize the EGL display connection */
 	std::println(std::cout, "versión: {}.{}", major, minor);
 	egl::BindAPI(egl::API::OPENGL_API);
@@ -165,7 +109,10 @@ TEST_CASE("contexto") {
 	// 	std::println(std::cout, "{}: {}", "TRANSPARENT_BLUE_VALUE", config.GetAttrib<egl::Config::Attrib::TRANSPARENT_BLUE_VALUE>());
 	// }
 	/* create an EGL rendering context */
-	const egl::Context context{display, configs.front()};
+	const egl::Context context{display, configs.front(), std::nullopt, {
+		{egl::Context::Attrib::MAJOR_VERSION, 4},
+		{egl::Context::Attrib::MINOR_VERSION, 6}
+	}};
 	/* create a native window */
 	auto native_window{create_x11_window(
 		pantalla,
@@ -173,40 +120,14 @@ TEST_CASE("contexto") {
 		configs.front().GetAttrib<egl::Config::Attrib::NATIVE_VISUAL_ID>(),
 		100,
 		100)};
-	// auto native_window{XCreateWindow(
-	// 	pantalla,
-	// 	rootWindow,
-	// 	0,
-	// 	0,
-	// 	100,
-	// 	100,
-	// 	0,
-	// 	0,
-	// 	0,
-	// 	nullptr,
-	// 	0,
-	// 	nullptr)};
-	/* create an EGL window surface */
-	// bool lanza{false};
-	// for (const auto& i : configs) {
-	// 	lanza = false;
-	// 	try {
-	// 		auto surface{egl::Surface::CreateWindow(display, i, native_window)};
-	// 	} catch (...) {
-	// 		lanza = true;
-	// 		// std::cout << i.GetAttrib<egl::Config::Attrib::CONFIG_ID>() << " lanza excepción" << '\n';
-	// 	}
-	// 	if (!lanza) {
-	// 		std::cout << i.GetAttrib<egl::Config::Attrib::CONFIG_ID>() << " no lanza excepción!!!" << '\n';
-	// 	}
-	// }
 	auto surface{egl::Surface::CreateWindow(display, configs.front(), native_window)};
 	/* connect the context to the surface */
 	egl::MakeCurrent(display, surface, surface, context);
+	gladLoadGL(egl::GetProcAddress);
 	/* clear the color buffer */
+	std::cout << "versión opengl: " << reinterpret_cast<const char*>(glGetString(GL_VERSION)) << '\n';
 	glClearColor(1.0, 1.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glFlush();
 	surface.SwapBuffers();
-	// sleep(10);
 }
