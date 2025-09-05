@@ -73,6 +73,7 @@ TEST_CASE("contexto") {
 		 {egl::Display::Attrib::SAMPLES, 0},
 		 {egl::Display::Attrib::RENDERABLE_TYPE, EGL_OPENGL_ES_BIT},
 		 {egl::Display::Attrib::SURFACE_TYPE, EGL_WINDOW_BIT}})};
+	CHECK(static_cast<bool>(configs.front().GetAttrib<egl::Config::Attrib::RENDERABLE_TYPE>() & egl::RenderableType::OPENGL_BIT));
 	// const auto configs{display.ChooseConfig()};
 	// for (const auto& config : configs) {
 	// 	std::println(std::cout, "-------------------");
@@ -109,10 +110,7 @@ TEST_CASE("contexto") {
 	// 	std::println(std::cout, "{}: {}", "TRANSPARENT_BLUE_VALUE", config.GetAttrib<egl::Config::Attrib::TRANSPARENT_BLUE_VALUE>());
 	// }
 	/* create an EGL rendering context */
-	const egl::Context context{display, configs.front(), std::nullopt, {
-		{egl::Context::Attrib::MAJOR_VERSION, 4},
-		{egl::Context::Attrib::MINOR_VERSION, 6}
-	}};
+	const egl::Context context{display, configs.front(), std::nullopt, {{egl::Context::Attrib::MAJOR_VERSION, 4}, {egl::Context::Attrib::MINOR_VERSION, 6}}};
 	/* create a native window */
 	auto native_window{create_x11_window(
 		pantalla,

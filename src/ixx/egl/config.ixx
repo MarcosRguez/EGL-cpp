@@ -17,6 +17,7 @@ import :display;
 import :debug;
 import :misc;
 import :mapas;
+import :enums;
 export namespace egl {
 class Display;
 class Config {
@@ -71,14 +72,14 @@ class Config {
 // clang-format off
 template <> struct Config::AttribValue<Config::Attrib::ALPHA_SIZE> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::ALPHA_MASK_SIZE> { using type = EGLint; };
-template <> struct Config::AttribValue<Config::Attrib::BIND_TO_TEXTURE_RGB> {	using type = EGLint; };
-template <> struct Config::AttribValue<Config::Attrib::BIND_TO_TEXTURE_RGBA> {	using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::BIND_TO_TEXTURE_RGB> {	using type = bool; };
+template <> struct Config::AttribValue<Config::Attrib::BIND_TO_TEXTURE_RGBA> {	using type = bool; };
 template <> struct Config::AttribValue<Config::Attrib::BLUE_SIZE> {	using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::BUFFER_SIZE> {	using type = EGLint; };
-template <> struct Config::AttribValue<Config::Attrib::COLOR_BUFFER_TYPE> {	using type = EGLint; };
-template <> struct Config::AttribValue<Config::Attrib::CONFIG_CAVEAT> {	using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::COLOR_BUFFER_TYPE> {	using type = EGLenum; };
+template <> struct Config::AttribValue<Config::Attrib::CONFIG_CAVEAT> {	using type = EGLenum; };
 template <> struct Config::AttribValue<Config::Attrib::CONFIG_ID> { using type = EGLint; };
-template <> struct Config::AttribValue<Config::Attrib::CONFORMANT> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::CONFORMANT> { using type = RenderableType; };
 template <> struct Config::AttribValue<Config::Attrib::DEPTH_SIZE> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::GREEN_SIZE> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::LEVEL> { using type = EGLint; };
@@ -88,16 +89,16 @@ template <> struct Config::AttribValue<Config::Attrib::MAX_PBUFFER_HEIGHT> { usi
 template <> struct Config::AttribValue<Config::Attrib::MAX_PBUFFER_PIXELS> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::MAX_SWAP_INTERVAL> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::MIN_SWAP_INTERVAL> { using type = EGLint; };
-template <> struct Config::AttribValue<Config::Attrib::NATIVE_RENDERABLE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::NATIVE_RENDERABLE> { using type = bool; };
 template <> struct Config::AttribValue<Config::Attrib::NATIVE_VISUAL_ID> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::NATIVE_VISUAL_TYPE> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::RED_SIZE> { using type = EGLint; };
-template <> struct Config::AttribValue<Config::Attrib::RENDERABLE_TYPE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::RENDERABLE_TYPE> { using type = RenderableType; };
 template <> struct Config::AttribValue<Config::Attrib::SAMPLE_BUFFERS> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::SAMPLES> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::STENCIL_SIZE> { using type = EGLint; };
-template <> struct Config::AttribValue<Config::Attrib::SURFACE_TYPE> { using type = EGLint; };
-template <> struct Config::AttribValue<Config::Attrib::TRANSPARENT_TYPE> { using type = EGLint; };
+template <> struct Config::AttribValue<Config::Attrib::SURFACE_TYPE> { using type = SurfaceType; };
+template <> struct Config::AttribValue<Config::Attrib::TRANSPARENT_TYPE> { using type = EGLenum; };
 template <> struct Config::AttribValue<Config::Attrib::TRANSPARENT_RED_VALUE> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::TRANSPARENT_GREEN_VALUE> { using type = EGLint; };
 template <> struct Config::AttribValue<Config::Attrib::TRANSPARENT_BLUE_VALUE> { using type = EGLint; };

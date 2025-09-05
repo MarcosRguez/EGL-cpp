@@ -30,7 +30,9 @@ if(${TEST_OPTION})
 			CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
 		)
 		target_link_libraries("${PROJECT_NAME}_${TEST_NAME}" PRIVATE
-			${LIB_NAME})
+			${LIB_NAME}
+			${X11_LIBRARIES}
+		)
 		target_include_directories("${PROJECT_NAME}_${TEST_NAME}" PRIVATE
 			"${EXTERNAL}")
 		add_test("${PROJECT_NAME}_${TEST_NAME}" ${TEST_NAME})

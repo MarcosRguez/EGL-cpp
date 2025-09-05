@@ -8,8 +8,10 @@
  *
  */
 module;
+#include <type_traits>
 #include <glad/egl.h>
 export module egl:enums;
+import :utils;
 export namespace egl {
 enum struct API : EGLenum {
 	OPENGL_API = EGL_OPENGL_API,
@@ -49,4 +51,26 @@ enum struct ReadDraw : EGLenum {
 	READ = EGL_READ,
 	DRAW = EGL_DRAW
 };
+enum struct RenderableType : EGLenum {
+	OPENGL_BIT = EGL_OPENGL_BIT,
+	OPENGL_ES_BIT = EGL_OPENGL_ES_BIT,
+	OPENGL_ES2_BIT = EGL_OPENGL_ES2_BIT,
+	OPENGL_ES3_BIT = EGL_OPENGL_ES3_BIT,
+	OPENVG_BIT = EGL_OPENVG_BIT
+};
+enum struct SurfaceType : EGLenum {
+	WINDOW_BIT = EGL_WINDOW_BIT,
+	PIXMAP_BIT = EGL_PIXMAP_BIT,
+	PBUFFER_BIT = EGL_PBUFFER_BIT,
+	MULTISAMPLE_RESOLVE_BOX_BIT = EGL_MULTISAMPLE_RESOLVE_BOX_BIT,
+	SWAP_BEHAVIOR_PRESERVED_BIT = EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+	VG_COLORSPACE_LINEAR_BIT = EGL_VG_COLORSPACE_LINEAR_BIT,
+	VG_ALPHA_FORMAT_PRE_BIT = EGL_VG_ALPHA_FORMAT_PRE_BIT
+};
 } // namespace egl
+// namespace egl {
+template <>
+struct enable_enum_bitwise_ops<egl::RenderableType> : std::true_type {};
+template <>
+struct enable_enum_bitwise_ops<egl::SurfaceType> : std::true_type {};
+// } // namespace egl

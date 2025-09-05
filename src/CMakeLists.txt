@@ -13,11 +13,10 @@ if(IXX)
 		PUBLIC FILE_SET m TYPE CXX_MODULES FILES ${IXX}
 		PRIVATE ${CXX}
 	)
-	add_dependencies(${LIB_NAME} glad)
+	add_dependencies(${LIB_NAME} glad_egl)
 	target_include_directories(${LIB_NAME} PUBLIC ${glad_INCLUDE_DIR})
 	target_link_libraries(${LIB_NAME} PUBLIC
-		glad
-		${X11_LIBRARIES}
+		glad_egl
 	)
 	if(ipo_supported AND NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug"))
 		set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
