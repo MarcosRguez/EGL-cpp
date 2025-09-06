@@ -11,5 +11,8 @@ module;
 export module egl:debug;
 import :enums;
 export namespace egl {
+#if __has_cpp_attribute(nodiscard)
+[[nodiscard]]
+#endif
 auto GetError() -> Error;
 } // namespace egl

@@ -17,6 +17,9 @@ class Sync {
 	auto ClientWait(
 		EGLint flags,
 		const std::chrono::nanoseconds& timeout) -> EGLint;
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
 	auto GetAttrib(
 		EGLint attribute,
 		EGLAttrib* value) -> bool;

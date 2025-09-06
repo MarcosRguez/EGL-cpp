@@ -37,9 +37,19 @@ Context::Context(
 		config.GetHandle(),
 		share_context ? share_context.value().GetHandle() : EGL_NO_CONTEXT, attribs.data());
 }
+Context::Context(const EGLContext& context, const Display& display) :
+		handle{context},
+		display{std::cref(display)} {}
 Context::~Context() {
 	if (!EGLBooleanToBool(eglDestroyContext(this->display.get().GetHandle(), this->handle))) {
 		std::println(std::cerr, "Error al destruir el contexto: {}", to_string(GetError()));
 	}
+}
+auto Context::GetCurrent() -> Context {
+	const auto handle{eglGetCurrentContext()};
+	if (handle == EGL_NO_CONTEXT) {
+		throw std::runtime_error{"EGL_NO_CONTEXT"};
+	}
+	return Context{handle, Display::GetCurrent()};
 }
 } // namespace egl

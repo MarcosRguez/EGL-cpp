@@ -2,35 +2,35 @@ file(GLOB_RECURSE IXX CONFIGURE_DEPENDS "ixx/*.ixx")
 file(GLOB_RECURSE CXX CONFIGURE_DEPENDS "cxx/*.cxx")
 
 if(IXX)
-	add_library(${PROJECT_NAME})
-	set_target_properties(${PROJECT_NAME} PROPERTIES
+	add_library(${LIB_NAME})
+	set_target_properties(${LIB_NAME} PROPERTIES
 		CXX_STANDARD 26
 		CXX_STANDARD_REQUIRED ON
 		CXX_EXTENSIONS OFF
 		CXX_SCAN_FOR_MODULES ON
 	)
-	target_sources(${PROJECT_NAME}
+	target_sources(${LIB_NAME}
 		PUBLIC FILE_SET m TYPE CXX_MODULES FILES ${IXX}
 		PRIVATE ${CXX}
 	)
-	add_dependencies(${LIB_NAME} glad_egl)
-	target_include_directories(${LIB_NAME} PUBLIC ${glad_INCLUDE_DIR})
+	add_dependencies(${LIB_NAME} glad-egl)
+	target_include_directories(${LIB_NAME} PRIVATE ${glad_INCLUDE_DIR})
 	target_link_libraries(${LIB_NAME} PUBLIC
-		glad_egl
+		glad-egl
 	)
 	if(ipo_supported AND NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug"))
-		set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+		set_target_properties(${LIB_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 	endif()
-	target_compile_definitions(${PROJECT_NAME} PUBLIC
+	target_compile_definitions(${LIB_NAME} PRIVATE
 		CMAKE_COMMAND="${CMAKE_COMMAND}"
 		CMAKE_CURRENT_BINARY_DIR="${CMAKE_CURRENT_BINARY_DIR}"
 		CMAKE_CURRENT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 		CMAKE_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 	)
 	if(DEFINED GLAD_DEBUG)
-		target_compile_definitions(${PROJECT_NAME} PRIVATE GLAD_DEBUG)
+		target_compile_definitions(${LIB_NAME} PRIVATE GLAD_DEBUG)
 	endif()
-	target_compile_options(${PROJECT_NAME} PRIVATE
+	target_compile_options(${LIB_NAME} PRIVATE
 		-Wall -Wextra -Wpedantic
 		# -Weffc++
 		# -Wabi-tag

@@ -67,6 +67,43 @@ enum struct SurfaceType : EGLenum {
 	VG_COLORSPACE_LINEAR_BIT = EGL_VG_COLORSPACE_LINEAR_BIT,
 	VG_ALPHA_FORMAT_PRE_BIT = EGL_VG_ALPHA_FORMAT_PRE_BIT
 };
+enum struct MultisampleResolve : EGLenum {
+	MULTISAMPLE_RESOLVE_DEFAULT = EGL_MULTISAMPLE_RESOLVE_DEFAULT,
+	MULTISAMPLE_RESOLVE_BOX = EGL_MULTISAMPLE_RESOLVE_BOX
+};
+enum struct SwapBehavior : EGLenum {
+	BUFFER_PRESERVED = EGL_BUFFER_PRESERVED,
+	BUFFER_DESTROYED = EGL_BUFFER_DESTROYED
+};
+enum struct TextureFormat : EGLenum {
+	NO_TEXTURE = EGL_NO_TEXTURE,
+	TEXTURE_RGB = EGL_TEXTURE_RGB,
+	TEXTURE_RGBA = EGL_TEXTURE_RGBA
+};
+enum struct TextureTarget : EGLenum {
+	NO_TEXTURE = EGL_NO_TEXTURE,
+	TEXTURE_2D = EGL_TEXTURE_2D
+};
+enum struct RenderBuffer : EGLenum {
+	BACK_BUFFER = EGL_BACK_BUFFER,
+	SINGLE_BUFFER = EGL_SINGLE_BUFFER
+};
+namespace gl {
+enum struct Colorspace : EGLenum {
+	SRGB = EGL_GL_COLORSPACE_SRGB,
+	LINEAR = EGL_GL_COLORSPACE_LINEAR
+};
+} // namespace gl
+namespace vg {
+enum struct AlphaFormat : EGLenum {
+	VG_ALPHA_FORMAT_NONPRE = EGL_VG_ALPHA_FORMAT_NONPRE,
+	VG_ALPHA_FORMAT_PRE = EGL_VG_ALPHA_FORMAT_PRE
+};
+enum struct Colorspace : EGLenum {
+	sRGB = EGL_VG_COLORSPACE_sRGB,
+	LINEAR = EGL_VG_COLORSPACE_LINEAR
+};
+} // namespace vg
 } // namespace egl
 // namespace egl {
 template <>

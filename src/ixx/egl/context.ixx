@@ -14,11 +14,16 @@ module;
 #include <utility>
 #include <any>
 #include <unordered_set>
+#include <stdexcept>
 #include <glad/egl.h>
 export module egl:context;
-// import :display;
+import :display;
 // import :config;
+import :enums;
 import :utils;
+import :debug;
+import :mapas;
+import :misc;
 export namespace egl {
 class Display;
 class Config;
@@ -34,19 +39,46 @@ class Context {
 		OPENGL_ROBUST_ACCESS = EGL_CONTEXT_OPENGL_ROBUST_ACCESS,
 		OPENGL_RESET_NOTIFICATION_STRATEGY = EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY,
 	};
+	enum struct QueryAttrib : EGLenum {
+		CONFIG_ID = EGL_CONFIG_ID,
+		CONTEXT_CLIENT_TYPE = EGL_CONTEXT_CLIENT_TYPE,
+		CONTEXT_CLIENT_VERSION = EGL_CONTEXT_CLIENT_VERSION,
+		RENDER_BUFFER = EGL_RENDER_BUFFER,
+	};
+	template <QueryAttrib attrib>
+	struct QueryValue;
+	template <QueryAttrib attrib>
+	using QueryValue_t = typename QueryValue<attrib>::type;
 	Context(
 		const Display& display,
 		const Config& config,
 		const std::optional<Context>& share_context = std::nullopt,
 		const std::unordered_map<Attrib, EGLint>& attrib_list = {});
 	~Context();
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
 	constexpr auto GetHandle() const noexcept -> const EGLContext&;
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
 	static auto GetCurrent() -> Context;
-	auto Query();
+	template <QueryAttrib attrib>
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
+	auto Query() -> QueryValue_t<attrib>;
+	explicit Context(const EGLContext& context, const Display& display);
  private:
 	EGLContext handle{};
 	std::reference_wrapper<std::add_const_t<Display>> display;
 };
+// clang-format off
+template <> struct Context::QueryValue<Context::QueryAttrib::CONFIG_ID> { using type = EGLint; };
+template <> struct Context::QueryValue<Context::QueryAttrib::CONTEXT_CLIENT_TYPE> { using type = API; };
+template <> struct Context::QueryValue<Context::QueryAttrib::CONTEXT_CLIENT_VERSION> { using type = EGLint; };
+template <> struct Context::QueryValue<Context::QueryAttrib::RENDER_BUFFER> { using type = RenderBuffer; };
+// clang-format on
 void MakeCurrent(
 	const Display& display,
 	const Surface& draw,
@@ -56,5 +88,13 @@ void MakeCurrent(
 namespace egl {
 constexpr auto Context::GetHandle() const noexcept -> const EGLContext& {
 	return this->handle;
+}
+template <Context::QueryAttrib attrib>
+auto Context::Query() -> Context::QueryValue_t<attrib> {
+	EGLint value{};
+	if (!EGLBooleanToBool(eglQueryContext(this->display.get().GetHandle(), this->handle, std::to_underlying(attrib), &value))) {
+		throw std::runtime_error{to_string(GetError())};
+	}
+	return static_cast<QueryValue_t<attrib>>(value);
 }
 } // namespace egl

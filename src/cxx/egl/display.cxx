@@ -41,7 +41,11 @@ auto Display::GetConfigs() -> std::vector<Config> {
 	return resultado;
 }
 auto Display::GetCurrent() -> Display {
-	return Display{eglGetCurrentDisplay()};
+	const auto handle{eglGetCurrentDisplay()};
+	if (handle == EGL_NO_DISPLAY) {
+		throw std::runtime_error{"EGL_NO_DISPLAY"};
+	}
+	return Display{handle};
 }
 auto Display::Initialize() -> std::pair<EGLint, EGLint> {
 	EGLint major{};
@@ -91,5 +95,8 @@ void Display::Terminate() {
 	if (!EGLBooleanToBool(eglTerminate(this->handle))) {
 		throw std::runtime_error{to_string(GetError())};
 	}
+}
+auto Display::QueryString(const StringName& name) const -> std::string_view {
+	return std::string_view{eglQueryString(this->handle, std::to_underlying(name))};
 }
 } // namespace egl

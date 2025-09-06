@@ -57,19 +57,19 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInf
 else()
 	unset(GLAD_DEBUG)
 endif()
-glad_add_library(glad_egl ${GLAD_DEBUG} LOADER API egl=1.5 API gl:core=4.6)
-set_target_properties(glad_egl PROPERTIES
+glad_add_library(glad-egl ${GLAD_DEBUG} LOADER API egl=1.5)
+set_target_properties(glad-egl PROPERTIES
 	C_STANDARD 23
 	C_STANDARD_REQUIRED ON
 	C_EXTENSIONS OFF
 )
 if(ipo_supported AND NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
-	set_target_properties(glad_egl PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
-	message(STATUS "Interprocedural optimization enabled for glad_egl")
+	set_target_properties(glad-egl PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+	message(STATUS "Interprocedural optimization enabled for glad-egl")
 endif()
 set(glad_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/gladsources/glad/include")
 
-set(LIB_NAME EGL++)
+set(LIB_NAME egl++)
 
 add_subdirectory("src")
 add_subdirectory("tests")

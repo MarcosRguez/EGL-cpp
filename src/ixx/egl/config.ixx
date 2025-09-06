@@ -61,9 +61,15 @@ class Config {
 	struct AttribValue;
 	template <Attrib attrib>
 	using AttribValue_t = typename AttribValue<attrib>::type;
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
 	constexpr auto GetHandle() const noexcept -> const EGLConfig&;
-	template <Attrib attribute>
-	auto GetAttrib() const -> AttribValue_t<attribute>;
+	template <Attrib attrib>
+#if __has_cpp_attribute(nodiscard)
+	[[nodiscard]]
+#endif
+	auto GetAttrib() const -> AttribValue_t<attrib>;
  private:
 	EGLConfig handle{};
 	std::reference_wrapper<std::add_const_t<Display>> display;
@@ -108,12 +114,12 @@ namespace egl {
 constexpr auto Config::GetHandle() const noexcept -> const EGLConfig& {
 	return this->handle;
 }
-template <Config::Attrib attribute>
-auto Config::GetAttrib() const -> AttribValue_t<attribute> {
-	AttribValue_t<attribute> value;
-	if (!EGLBooleanToBool(eglGetConfigAttrib(this->display.get().GetHandle(), this->handle, std::to_underlying(attribute), reinterpret_cast<EGLint*>(&value)))) {
+template <Config::Attrib attrib>
+auto Config::GetAttrib() const -> AttribValue_t<attrib> {
+	EGLint value{};
+	if (!EGLBooleanToBool(eglGetConfigAttrib(this->display.get().GetHandle(), this->handle, std::to_underlying(attrib), &value))) {
 		throw std::runtime_error{to_string(GetError())};
 	}
-	return value;
+	return static_cast<AttribValue_t<attrib>>(value);
 }
 } // namespace egl

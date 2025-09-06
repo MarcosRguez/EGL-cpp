@@ -21,8 +21,8 @@ module;
 #include <type_traits>
 #include <ranges>
 #include <algorithm>
-export module egl:utils;
-export {
+module egl:utils;
+// export {
 template <typename T, template <typename...> typename D>
 struct is_specialization : std::false_type {};
 template <template <typename...> typename T, typename... D>
@@ -328,4 +328,4 @@ auto VarToVec(const std::variant<std::vector<T>...>& var) -> std::vector<std::va
 	});
 	return resultado;
 }
-}
+// }

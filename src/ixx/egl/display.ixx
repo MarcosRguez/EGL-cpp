@@ -79,16 +79,16 @@ class Display {
 #if __has_cpp_attribute(nodiscard)
 	[[nodiscard]]
 #endif
-	auto QueryString(const StringName&) -> std::string_view;
+	auto QueryString(const StringName& name) const -> std::string_view;
 #if __has_cpp_attribute(nodiscard)
 	[[nodiscard]]
 #endif
 	auto ChooseConfig(const std::unordered_map<Attrib, EGLint> attrib_list = {}) -> std::vector<Config>;
 	void SwapInterval(const EGLint& interval);
 	void Terminate();
+	explicit Display(const EGLDisplay& handle);
  private:
 	EGLDisplay handle{};
-	explicit Display(const EGLDisplay& handle);
 };
 } // namespace egl
 namespace egl {
