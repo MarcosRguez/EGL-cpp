@@ -111,8 +111,7 @@ auto CargarFichero(
 	if (!file.is_open()) { throw std::runtime_error{"Fichero no encontrado"}; }
 	auto fsize{file.tellg()};
 	file.seekg(0, std::fstream::end);
-	fsize = file.tellg() - fsize;
-	resultado.resize(fsize);
+	resultado.resize(fsize = file.tellg() - fsize);
 	file.seekg(std::fstream::beg);
 	file.read(
 		reinterpret_cast<char*>(
