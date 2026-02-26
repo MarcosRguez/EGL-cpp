@@ -1,0 +1,28 @@
+{
+	"name": "EGL CPP Dev Container",
+	"build": {
+		"context": "..",
+		"dockerfile": "Dockerfile"
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/sshd:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools-extension-pack",
+				"ms-vscode.cmake-tools"
+			]
+		}
+	},
+	"mounts": [
+		// "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind"
+	],
+	// "remoteEnv": {
+	// 	"SSH_AUTH_SOCK": "/ssh-agent"
+	// },
+	"remoteUser": "vscode"
+}

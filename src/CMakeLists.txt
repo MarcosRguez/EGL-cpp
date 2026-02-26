@@ -18,7 +18,7 @@ if(IXX)
 	target_link_libraries(${LIB_NAME} PUBLIC
 		glad-egl
 	)
-	if(ipo_supported AND NOT (${CMAKE_BUILD_TYPE} STREQUAL "Debug"))
+	if(ipo_supported AND NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
 		set_target_properties(${LIB_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 	endif()
 	target_compile_definitions(${LIB_NAME} PRIVATE
