@@ -13,7 +13,10 @@
 		"vscode": {
 			"extensions": [
 				"ms-vscode.cpptools-extension-pack",
-				"ms-vscode.cmake-tools"
+				"ms-vscode.cmake-tools",
+				"ms-vscode.cpptools",
+				"ms-vscode.cpp-devtools",
+				"GitHub.vscode-pull-request-github"
 			]
 		}
 	},

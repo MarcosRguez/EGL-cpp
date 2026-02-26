@@ -20,6 +20,7 @@
 #include <glad/gl.h>
 import egl;
 using namespace std::literals;
+using namespace egl::literals;
 auto* pantalla{XOpenDisplay(nullptr)};
 auto rootWindow{XDefaultRootWindow(pantalla)};
 Window create_x11_window(

@@ -21,8 +21,8 @@ module;
 #include <type_traits>
 #include <ranges>
 #include <algorithm>
-module egl:utils;
-// export {
+export module egl:utils;
+namespace egl {
 template <typename T, template <typename...> typename D>
 struct is_specialization : std::false_type {};
 template <template <typename...> typename T, typename... D>
@@ -34,57 +34,6 @@ requires std::is_enum_v<E>
 struct enable_enum_bitwise_ops : std::false_type {};
 template <typename E>
 constexpr auto enable_enum_bitwise_ops_v{enable_enum_bitwise_ops<E>::value};
-template <typename E>
-requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
-#if __has_cpp_attribute(nodiscard)
-[[nodiscard]]
-#endif
-constexpr auto operator&(const E& lhs, const E& rhs) -> E {
-	using U = std::underlying_type_t<E>;
-	return static_cast<E>(static_cast<U>(lhs) & static_cast<U>(rhs));
-}
-template <typename E>
-requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
-#if __has_cpp_attribute(nodiscard)
-[[nodiscard]]
-#endif
-constexpr auto operator|(const E& lhs, const E& rhs) -> E {
-	using U = std::underlying_type_t<E>;
-	return static_cast<E>(static_cast<U>(lhs) | static_cast<U>(rhs));
-}
-template <typename E>
-requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
-#if __has_cpp_attribute(nodiscard)
-[[nodiscard]]
-#endif
-constexpr auto operator^(const E& lhs, const E& rhs) -> E {
-	using U = std::underlying_type_t<E>;
-	return static_cast<E>(static_cast<U>(lhs) ^ static_cast<U>(rhs));
-}
-template <typename E>
-requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
-#if __has_cpp_attribute(nodiscard)
-[[nodiscard]]
-#endif
-constexpr auto operator&=(const E& lhs, const E& rhs) -> E {
-	return lhs = lhs & rhs;
-}
-template <typename E>
-requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
-#if __has_cpp_attribute(nodiscard)
-[[nodiscard]]
-#endif
-constexpr auto operator|=(const E& lhs, const E& rhs) -> E {
-	return lhs = lhs | rhs;
-}
-template <typename E>
-requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
-#if __has_cpp_attribute(nodiscard)
-[[nodiscard]]
-#endif
-constexpr auto operator^=(const E& lhs, const E& rhs) -> E {
-	return lhs = lhs ^ rhs;
-}
 /**
  * @brief Carga un fichero
  * @tparam T std::string o std::vector
@@ -327,4 +276,57 @@ auto VarToVec(const std::variant<std::vector<T>...>& var) -> std::vector<std::va
 	});
 	return resultado;
 }
-// }
+} // namespace egl
+export namespace egl::literals {
+template <typename E>
+requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
+#if __has_cpp_attribute(nodiscard)
+[[nodiscard]]
+#endif
+constexpr auto operator&(const E& lhs, const E& rhs) -> E {
+	using U = std::underlying_type_t<E>;
+	return static_cast<E>(static_cast<U>(lhs) & static_cast<U>(rhs));
+}
+template <typename E>
+requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
+#if __has_cpp_attribute(nodiscard)
+[[nodiscard]]
+#endif
+constexpr auto operator|(const E& lhs, const E& rhs) -> E {
+	using U = std::underlying_type_t<E>;
+	return static_cast<E>(static_cast<U>(lhs) | static_cast<U>(rhs));
+}
+template <typename E>
+requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
+#if __has_cpp_attribute(nodiscard)
+[[nodiscard]]
+#endif
+constexpr auto operator^(const E& lhs, const E& rhs) -> E {
+	using U = std::underlying_type_t<E>;
+	return static_cast<E>(static_cast<U>(lhs) ^ static_cast<U>(rhs));
+}
+template <typename E>
+requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
+#if __has_cpp_attribute(nodiscard)
+[[nodiscard]]
+#endif
+constexpr auto operator&=(const E& lhs, const E& rhs) -> E {
+	return lhs = lhs & rhs;
+}
+template <typename E>
+requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
+#if __has_cpp_attribute(nodiscard)
+[[nodiscard]]
+#endif
+constexpr auto operator|=(const E& lhs, const E& rhs) -> E {
+	return lhs = lhs | rhs;
+}
+template <typename E>
+requires std::is_enum_v<E> && enable_enum_bitwise_ops_v<E>
+#if __has_cpp_attribute(nodiscard)
+[[nodiscard]]
+#endif
+constexpr auto operator^=(const E& lhs, const E& rhs) -> E {
+	return lhs = lhs ^ rhs;
+}
+} // namespace egl

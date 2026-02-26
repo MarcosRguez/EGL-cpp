@@ -104,10 +104,12 @@ enum struct Colorspace : EGLenum {
 	LINEAR = EGL_VG_COLORSPACE_LINEAR
 };
 } // namespace vg
-} // namespace egl
-// namespace egl {
+// namespace literals {
 template <>
 struct enable_enum_bitwise_ops<egl::RenderableType> : std::true_type {};
 template <>
 struct enable_enum_bitwise_ops<egl::SurfaceType> : std::true_type {};
+// } // namespace literals
+} // namespace egl
+// namespace egl {
 // } // namespace egl

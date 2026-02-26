@@ -11,7 +11,7 @@ module;
 #include <glad/egl.h>
 export module egl;
 export import :glad;
-import :utils;
+export import :utils;
 export import :debug;
 export import :misc;
 export import :enums;
